@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Orders;
+use App\Products;
+use App\Packages;
+
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
@@ -14,7 +17,19 @@ class OrdersController extends Controller
      */
     public function index()
     {
-        //
+        $products_in_packages = [];
+        $products = Products::all();
+        $packages = Packages::all();
+        foreach ($packages as $package){
+            $products_in_packages[] = Packages::find($package->id)->products;
+        }
+//        $no = 1;
+//        for ($i = 0; $i<count($products_in_packages[$no]);$i++){
+//            echo $products_in_packages[$no][$i]->product_name;
+//        }
+//        dd($products_in_packages);
+
+        return view('client.product-order', compact('packages', 'products', 'products_in_packages'));
     }
 
     /**

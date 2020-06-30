@@ -42,11 +42,11 @@
                                             <td>{{$package->price}}</td>
                                             <td>
                                             @for($i=0; $i<count($product_list[$no]);$i++)
-                                            {{$product_list[$no][$i]->product_name.", "}}
+                                            {{$product_list[$no][$i]->product_name.","}}<br>
                                             @endfor
                                             </td>
                                             @php($no++)
-                                            <td> <a href="" class="btn btn-ft btn-rounded btn-outline-info">Detail</a></td>
+                                            <td> <a href="{{route('update-package', $package->id)}}" class="btn btn-ft btn-rounded btn-outline-info">Detail</a></td>
                                         </tr>
                                     @endforeach
                                     </tbody>

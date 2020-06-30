@@ -15,6 +15,7 @@ class AreaController extends Controller
     public function index()
     {
         //
+
     }
 
     /**
@@ -35,7 +36,10 @@ class AreaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $area = new Area();
+        $area->area_name = $request->input('area');
+        $area->save();
+        return back();
     }
 
     /**
@@ -44,9 +48,10 @@ class AreaController extends Controller
      * @param  \App\Area  $area
      * @return \Illuminate\Http\Response
      */
-    public function show(Area $area)
+    public function show(Request $request)
     {
-        //
+        $area = Area::whereId($request->input('area_id'))->get();
+        echo $area;
     }
 
     /**
@@ -67,9 +72,11 @@ class AreaController extends Controller
      * @param  \App\Area  $area
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Area $area)
+    public function update(Request $request, $id)
     {
-        //
+        $area_name = $request->input('area');
+        Area::whereId($id)->update(['area_name'=>$area_name]);
+        return back();
     }
 
     /**
@@ -78,8 +85,9 @@ class AreaController extends Controller
      * @param  \App\Area  $area
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Area $area)
+    public function destroy(Area $area, $id)
     {
-        //
+        Area::whereId($id)->delete();
+        return back();
     }
 }

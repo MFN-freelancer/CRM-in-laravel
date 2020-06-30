@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Area;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Auth;
@@ -9,6 +10,7 @@ use App\User;
 use App\Products;
 use App\Packages;
 use App\PackageDetail;
+use App\Business;
 class HomeController extends Controller
 {
     /**
@@ -186,23 +188,107 @@ class HomeController extends Controller
         return view('admin.places');
     }
     public function areas(){
-        return view('admin.areas');
+        $areas = Area::all();
+        return view('admin.areas', compact('areas'));
     }
 //    client part
     public function cDashboard(){
-        return view('client.dashboard');
+        $businesses = Business::where('client_id', Auth::user()->id)->get();
+        return view('client.dashboard', compact('businesses'));
     }
     public function cCatalog(){
-        return view('client.catalog');
+        $products = Products::all();
+        return view('client.catalog', compact('products'));
     }
+//    cplace part
     public function cPlaces(){
-        return view('client.places');
+        $businesses = Business::where('client_id',Auth::user()->id)->get();
+        return view('client.places', compact('businesses'));
     }
+    public function addPlace(){
+        return view('client.add-place');
+    }
+
+    /**
+     * @param Request $request
+     */
+
+    public function storePlace(Request $request){
+
+        $client_id = Auth::user()->id;
+        $address = $request->input('address');
+        $city = $request->input('city');
+        $floor = $request->input('floor');
+        $number = $request->input('number');
+        $contact_number = $request->input('contact_number');
+        $code = $request->input('code');
+        $note = $request->input('note');
+
+        $business = new Business();
+        $business->address = $address;
+        $business->city = $city;
+        $business->floor = $floor;
+        $business->house_cnt = $number;
+        $business->note = $note;
+        $business->code = $code;
+        if ($request->input('apartment')){
+            $business->kind = 0;
+        }else{
+            $business->kind = 1;
+        }
+
+        $business->contact = $contact_number;
+        $business->client_id = $client_id;
+        $business->save();
+        return redirect()->route('client-places');
+    }
+    public function getPlace($id){
+        $place = Business::where('id', $id)->get();
+        return view('client.update-place', compact('place'));
+    }
+    public function updatePlace(Request $request, $id){
+        $address = $request->input('address');
+        $city = $request->input('city');
+        $floor = $request->input('floor');
+        $number = $request->input('number');
+        $contact_number = $request->input('contact_number');
+        $code = $request->input('code');
+        $note = $request->input('note');
+        if ($request->input('apartment')){
+            $kind = 0;
+        }else{
+            $kind = 1;
+        }
+        Business::where('id', $id)->update(['address'=>$address, 'city'=>$city, 'floor'=>$floor, 'house_cnt'=>$number,
+            'note'=>$note, 'code'=>$code, 'kind'=>$kind, 'contact'=>$contact_number]);
+        return redirect()->route('client-places');
+
+    }
+    public function placeDestroy($id){
+        Business::where('id', $id)->delete();
+        return redirect()->route('client-places');
+    }
+    //    end cplace part
     public function orderHistory(){
         return view('client.order-history');
     }
     public function cProfile(){
         return view('client.profile');
+    }
+    public function updateProfile(Request $request, $id){
+        $profile_img = 'default.png';
+        if ($request->hasFile('profile')){
+            $profile_img = $request->file('profile')->getClientOriginalName();
+            $request->file('profile')->move(public_path('avatar'), $profile_img);
+        }
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $avatar = $profile_img;
+        $address = $request->input('address');
+        $phone = $request->input('phone');
+        User::whereId($id)->update(['name'=>$name, 'email'=>$email, 'avatar'=>$avatar, 'address'=>$address
+                 ,'phone'=>$phone]);
+        return back();
     }
 //    delivery user
     public function orderList(){

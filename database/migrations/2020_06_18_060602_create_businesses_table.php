@@ -20,12 +20,13 @@ class CreateBusinessesTable extends Migration
             $table->string('floor')->nullable();
             $table->integer('house_cnt')->nullable();
             $table->string('note')->nullable();
-            $table->integer('client_id')->nullable();
             $table->string('code')->nullable();
             $table->integer('kind')->nullable();
             $table->string('contact')->nullable();
-            $table->integer('area_id')->nullable();
-
+            $table->unsignedBigInteger('client_id')->nullable();
+            $table->unsignedBigInteger('area_id')->nullable();
+            $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
             $table->timestamps();
         });
     }

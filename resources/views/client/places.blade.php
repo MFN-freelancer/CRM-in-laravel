@@ -9,7 +9,9 @@
                 <div class="col p-md-0">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item active">
-                            <a href=""><span class="btn-icon-left text-info"><i class="fa fa-plus color-info"></i> </span>Add Address</a>
+                            <a href="{{route('add-place')}}">
+                                <span class="btn-icon-left text-info"><i class="fa fa-plus color-info"></i> </span>
+                                Add Address</a>
                         </li>
                     </ol>
                 </div>
@@ -23,7 +25,7 @@
                                     <thead>
                                     <tr>
                                         <th>Kind</th>
-                                        <th>Title</th>
+                                        <th>Address</th>
                                         <th>City</th>
                                         <th>Contact Number</th>
                                         <th>Floor</th>
@@ -32,15 +34,23 @@
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    @foreach($businesses as $business)
                                     <tr>
-                                        <td>Hotel</td>
-                                        <td>Sam & Blondy</td>
-                                        <td>tel aviv</td>
-                                        <td>2342344</td>
-                                        <td>2</td>
-                                        <td>#233</td>
-                                        <td> <a href="" class="btn btn-ft btn-rounded btn-outline-info">Detail</a></td>
+                                        <td>
+                                            @if($business->kind == 0)
+                                                Apartment
+                                            @else
+                                                Hotel
+                                            @endif
+                                        </td>
+                                        <td>{{$business->address}}</td>
+                                        <td>{{$business->city}}</td>
+                                        <td>{{$business->contact}}</td>
+                                        <td>{{$business->floor}}</td>
+                                        <td>{{$business->code}}</td>
+                                        <td> <a href="{{route('update-place', $business->id)}}" class="btn btn-ft btn-rounded btn-outline-info">Detail</a></td>
                                     </tr>
+                                    @endforeach
                                     </tbody>
 
                                 </table>

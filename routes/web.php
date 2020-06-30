@@ -37,6 +37,9 @@ Route::group(['prefix'=>'admin'], function (){
     Route::get('package', 'HomeController@package')->name('package');
     Route::get('package/add', 'PackagesController@index')->name('add-package');
     Route::post('package/add', 'PackagesController@store');
+    Route::get('package/update/{id}', 'PackagesController@edit')->name('update-package');
+    Route::post('package/update/{id}', 'PackagesController@update');
+    Route::get('package/delete/{id}', 'PackagesController@destroy')->name('delete-package');
 
 
 //    end package
@@ -57,17 +60,37 @@ Route::group(['prefix'=>'admin'], function (){
     Route::get('users/delivery-man/delete/{id}', 'HomeController@deleteDelivery')->name('delete-delivery');
 //delivery end
     Route::get('places', 'HomeController@places')->name('places');
+//areas
     Route::get('areas', 'HomeController@areas')->name('areas');
+    Route::post('areas/add', 'AreaController@store')->name('add-areas');
+    Route::post('area/get', 'AreaController@show')->name('get-area');
+    Route::post('areas/update/{id}', 'AreaController@update')->name('update-area');
+    Route::get('areas/delete/{id}', 'AreaController@destroy')->name('delete-area');
+
 });
+
+
+
 //client part
 
 Route::group(['prefix'=>'client'], function (){
 
     Route::get('dashboard', 'HomeController@cDashboard')->name('client-dashboard');
+    Route::get('product-order/{id}', 'OrdersController@index')->name('product-order');
+
+
     Route::get('catalog', 'HomeController@cCatalog')->name('catalog');
+//    places
     Route::get('places', 'HomeController@cPlaces')->name('client-places');
+    Route::get('places/add', 'HomeController@addPlace')->name('add-place');
+    Route::post('places/add', 'HomeController@storePlace');
+    Route::get('places/update/{id}', 'HomeController@getPlace')->name('update-place');
+    Route::post('places/update/{id}', 'HomeController@updatePlace');
+    Route::get('places/delete/{id}', 'HomeController@placeDestroy')->name('delete-place');
+//    end places
     Route::get('order-history', 'HomeController@orderHistory')->name('order-history');
     Route::get('profile', 'HomeController@cProfile')->name('client-profile');
+    Route::post('profile/{id}', 'HomeController@updateProfile')->name('update-profile');
 });
 //user part
 Route::group(['prefix'=>'user'], function (){

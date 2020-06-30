@@ -14,14 +14,17 @@
                             <div class="table-responsive">
                                 <table class="table header-border" style="min-width: 500px;">
                                     <tbody>
+                                    @foreach($businesses as $business)
                                     <tr>
-                                        <td><a href="javascript:void(0)"> Sam&Blondi </a>
+                                        <td>{{$business->address}}
                                         </td>
                                         <td><button type="button" class="btn btn-danger btn-ft">Auto</button></td>
-                                        <td><button type="button" class="btn btn-info btn-ft">Store</button></span>
+                                        <td><a href="{{route('product-order', $business->id)}}" class="btn btn-info
+                                        btn-ft">Store</a></span>
                                         </td>
                                         <td><span class="orderedDates">16 on Jun</span></td>
                                     </tr>
+                                    @endforeach
                                     </tbody>
                                 </table>
                             </div>
