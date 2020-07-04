@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Area;
+use App\OrderDetail;
+use App\Orders;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Auth;
@@ -44,7 +46,45 @@ class HomeController extends Controller
         }
     }
     public function orders(){
-        return view('admin.orders');
+//        $total_orders = [];
+        $final_orders = [];
+        $products = [];
+        $temp_products = [];
+        $package_name ='';
+        $orders = Orders::all();
+        foreach ($orders as $order){
+            $client_name = User::whereId($order->client_id)->select('name')->get();
+            $address = Business::whereId($order->business_id)->get();
+            $items = OrderDetail::where('order_id', $order->id)->select('product_id', 'package_id')->get();
+//            dd($items);
+            foreach ($items as $item){
+                $p_name = Products::whereId($item->product_id)->get();
+//                dd($p_name);
+                $temp = array([
+                    'product_name'=>$p_name[0]->product_name,
+                    'product_qty'=>$item->qty
+                ]);
+                array_push($temp_products,$temp);
+                $package_name = Packages::whereId($item->package_id)->get();
+            }
+            array_push($products, $temp_products);
+            $temp_products = [];
+
+//            dd($package_name[0]->name);
+            $total_orders = array([
+                'time'=>$order->time_range,
+                'date'=>$order->date,
+                'client'=>$client_name[0]->name,
+                'address'=>$address[0]->address,
+                'product'=>$products,
+                'package'=>count($package_name) ? $package_name[0]->name : ""
+            ]);
+
+            array_push($final_orders, $total_orders);
+            $products = [];
+        }
+//        dd($final_orders);
+        return view('admin.orders', compact('final_orders'));
     }
     public function dashboard(){
         return view('admin.dashboard');
@@ -194,7 +234,11 @@ class HomeController extends Controller
 //    client part
     public function cDashboard(){
         $businesses = Business::where('client_id', Auth::user()->id)->get();
-        return view('client.dashboard', compact('businesses'));
+        $current_date = date('Y-m-d');
+        $orders = Orders::where('date','>=', $current_date)
+                          ->where('client_id', Auth::user()->id)->get();
+//        dd($orders);
+        return view('client.dashboard', compact('businesses', 'orders'));
     }
     public function cCatalog(){
         $products = Products::all();
@@ -270,7 +314,17 @@ class HomeController extends Controller
     }
     //    end cplace part
     public function orderHistory(){
-        return view('client.order-history');
+        $order_address = [];
+//        $addresses = Business::all();
+        $orders = Orders::where('client_id', Auth::user()->id)->orderBy('date', 'DESC')->get();
+//        dd($orders);
+//        $address = Orders::find(11)->order_address;
+//        dd($address->address);
+        foreach ($orders as $order){
+            $order_address[] = orders::find($order->id)->order_address;
+        }
+//        dd($order_address);
+        return view('client.order-history', compact('orders','order_address'));
     }
     public function cProfile(){
         return view('client.profile');

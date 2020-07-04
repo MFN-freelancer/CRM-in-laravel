@@ -77,6 +77,7 @@ Route::group(['prefix'=>'client'], function (){
 
     Route::get('dashboard', 'HomeController@cDashboard')->name('client-dashboard');
     Route::get('product-order/{id}', 'OrdersController@index')->name('product-order');
+    Route::post('product-order/{id}', 'OrdersController@store');
 
 
     Route::get('catalog', 'HomeController@cCatalog')->name('catalog');
@@ -88,7 +89,10 @@ Route::group(['prefix'=>'client'], function (){
     Route::post('places/update/{id}', 'HomeController@updatePlace');
     Route::get('places/delete/{id}', 'HomeController@placeDestroy')->name('delete-place');
 //    end places
+//    order history start
     Route::get('order-history', 'HomeController@orderHistory')->name('order-history');
+    Route::get('order-detail/{id}', 'OrderDetailController@index')->name('order-detail');
+//    order history end
     Route::get('profile', 'HomeController@cProfile')->name('client-profile');
     Route::post('profile/{id}', 'HomeController@updateProfile')->name('update-profile');
 });

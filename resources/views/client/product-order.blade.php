@@ -1,5 +1,6 @@
 @extends("layouts.backend")
 @section("content")
+
     <div class="content-body">
         <div class="container-fluid">
             <div class="row page-titles">
@@ -14,18 +15,18 @@
                             <input id="txtfuturedate" type="text" style="width: 97px;" placeholder="Choose date" />
                         </li>
                         <li style="padding: 15px;">
-                            <select  tabindex="-98">
+                            <select  tabindex="-98" id="time-range">
                                 <option>9:00</option>
                                 <option>11:00</option>
                                 <option>14:00</option>
                             </select>
                         </li>
-                        <li style="padding: 15px;"><input class="form-check-input styled-checkbox" type="checkbox"
-                                                          id="sos_check">
+                        <li style="padding: 15px;">
+                            <input class="form-check-input styled-checkbox" type="checkbox" id="sos_check">
                             <label class="form-check-label mr-sm-5" for="sos_check">SOS</label>
                         </li>
                         <li class="breadcrumb-item active" style="padding: 15px;">
-                            <a href="">Order</a>
+                            <button class="btn btn-light btn-ft order-now">Order</button>
                         </li>
                     </ol>
                 </div>
@@ -35,7 +36,10 @@
                 <div class="col-xl-12">
                     <div class="card forms-card">
                         <div class="card-body">
-                            <div class="row">
+                            <div class="warning-msg">
+
+                            </div>
+                            <div class="row package">
                                 @php($no=0)
                                 @foreach($packages as $package)
                                     <div class="col-lg-6">
@@ -52,13 +56,17 @@
                                                 <div class="form-check row">
                                                     <div class="d-flex justify-content-around">
                                                         <div style="padding: 15px;">
-                                                            <label>${{$package->price}}</label>
+                                                            <label >
+                                                                ${{$package->price}}
+                                                            </label>
                                                         </div>
                                                         <div class="col-sm-4">
                                                             <input type="number" class="form-control"
-                                                                   value="0" >
+                                                                   value="0"
+                                                                   package-price="{{$package->price}}"
+                                                                   package-id = "{{$package->id}}"
+                                                            >
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -67,7 +75,7 @@
                                     @php($no++)
                                 @endforeach
                             </div>
-                            <div class="row">
+                            <div class="row product">
                             @foreach($products as $product)
                             <div class="col-lg-3">
                                 <div class="card">
@@ -80,7 +88,11 @@
                                         <div class="form-check row">
                                             <div class="d-flex">
                                                 <div >
-                                                    <input type="number" class="form-control qty{{$product->id}}" value="0" >
+                                                    <input type="number" class="form-control"
+                                                           product-id="{{$product->id}}"
+                                                           product-price="{{$product->product_price}}"
+                                                           value="0"
+                                                    >
                                                 </div>
                                                 <div style="padding:14px;">
                                                     <input class="form-check-input styled-checkbox" type="checkbox" id="p_check{{$product->id}}">
@@ -102,9 +114,97 @@
     </div>
     <script>
         jQuery(document).ready(function($) {
-            $("#txtfuturedate").datepicker({
-                minDate: 0
+            $('#txtfuturedate').datepicker({
+                minDate: 0,
             });
+
         });
+        //alert function for delay 3 seconds
+        function alertTimeout(wait){
+            setTimeout(function(){
+                $('.warning-msg .alert').remove();
+            }, wait);
+        }
+        var flag = 0;
+        var product_flag = 0;
+        var business_id = '{{$business_id}}';
+        //order button
+        $('.order-now').click(function () {
+
+            if ($('#txtfuturedate').val()==''){
+                var myvar = '<div class="alert alert-danger">Please select a date!</div>';
+                $('.warning-msg').html(myvar);
+                alertTimeout(3000);
+
+            }else{
+                //package part
+                $(".package input[type='number']").each(function() {
+                    if ($(this).val() == "0") {
+                        // console.log("empty qty!");
+                    }else {
+                        flag = 1;
+                        // console.log($(this).val());
+                        // console.log(business_id);
+                        // console.log($(this).attr('package-price'));
+                        // console.log($('#txtfuturedate').val());
+                        // console.log($('#time-range').val());
+                        var b_id = business_id;
+                        var date = $('#txtfuturedate').val();
+                        var time_range = $('#time-range').val();
+                        var total = $(this).attr('package-price');
+                        //order detail fields
+                        var package_id = $(this).attr('package-id');
+                        var qty = $(this).val();
+                        $.post("{{route('product-order', $business_id)}}",{
+                            _token:'{{csrf_token()}}',
+                            b_id:b_id, date:date, time_range:time_range,
+                            total_price:total, package_id: package_id, qty:qty
+                        }).done(
+                            function (data) {
+                                console.log(data);
+                                {{--document.location.href = '{{route('package')}}'--}}
+                            }
+                        );
+                    }
+                });
+            //    product part
+                $(".product input[type='number']").each(function() {
+                    if ($(this).val() == "0") {
+                        // console.log("empty qty!");
+                    }else {
+                        flag = 1;
+                        var b_id = business_id;
+                        var date = $('#txtfuturedate').val();
+                        var time_range = $('#time-range').val();
+                        var total = $(this).attr('product-price')*$(this).val();
+                        //order detail fields
+                        var product_id = $(this).attr('product-id');
+                        var qty = $(this).val();
+                        $.post("{{route('product-order', $business_id)}}",{
+                            _token:'{{csrf_token()}}',
+                            b_id:b_id, date:date, time_range:time_range,
+                            total_price:total, product_id: product_id, qty:qty
+                        }).done(
+                            function (data) {
+                                console.log(data);
+                                {{--document.location.href = '{{route('package')}}'--}}
+                                product_flag = 1;
+                            }
+                        );
+                    }
+                });
+            }
+            //if product not select
+            if (flag == 0){
+                var myvar = '<div class="alert alert-danger">Please select a product!</div>';
+                $('.warning-msg').html(myvar);
+                alertTimeout(3000);
+            }
+            if (flag==1 || product_flag == 1){
+                {{--document.location.href = '{{route('client-dashboard')}}'--}}
+            }
+
+        })
+
     </script>
 @endsection

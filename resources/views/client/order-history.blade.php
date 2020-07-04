@@ -31,13 +31,22 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-
+                                    @php($no=0)
+                                    @foreach($orders as $order)
                                     <tr>
-                                        <td>address </td>
-                                        <td>$33</td>
-                                        <td><span class="label label-secondary">ordered</span></td>
-                                        <td>2020-6-17</td>
-                                        <td><a href="" class="btn btn-ft btn-rounded btn-outline-info">Detail</a></td>
+                                        <td>{{$order_address[$no]->address}} </td>
+                                        <td>${{$order->total}}</td>
+                                        <td>
+                                            @if($order->status == 1)
+                                                <span class="label label-secondary">ordered</span>
+                                            @else
+                                                <span class="label label-success">Delivered</span>
+                                            @endif
+                                        </td>
+                                        <td>{{$order->date}}</td>
+                                        <td><a href="{{route('order-detail', $order->id)}}" class="btn btn-ft
+                                        btn-rounded
+                                        btn-outline-info">Detail</a></td>
                                         <td>
                                             <span>
                                                 <a href="javascript:void()" class="mr-4" data-toggle="tooltip"
@@ -49,23 +58,8 @@
                                             </span>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>address </td>
-                                        <td>$33</td>
-                                        <td><span class="label label-success">Delivered</span></td>
-                                        <td>2020-6-17</td>
-                                        <td><a href="" class="btn btn-ft btn-rounded btn-outline-info">Detail</a></td>
-                                        <td>
-                                            <span>
-                                                <a href="javascript:void()" class="mr-4" data-toggle="tooltip"
-                                                   data-placement="top" title="" data-original-title="Edit"><i
-                                                            class="fa fa-pencil color-muted"></i> </a>
-                                                <a href="javascript:void()" data-toggle="tooltip"
-                                                   data-placement="top" title="" data-original-title="Close"><i
-                                                            class="fa fa-close color-danger"></i></a>
-                                            </span>
-                                        </td>
-                                    </tr>
+                                        @php($no++)
+                                    @endforeach
                                     </tbody>
                                 </table>
                             </div>

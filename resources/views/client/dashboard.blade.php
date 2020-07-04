@@ -22,7 +22,16 @@
                                         <td><a href="{{route('product-order', $business->id)}}" class="btn btn-info
                                         btn-ft">Store</a></span>
                                         </td>
-                                        <td><span class="orderedDates">16 on Jun</span></td>
+                                        <td style="font-size: 18px;">
+                                            @foreach($orders as $order)
+                                                @if($business->id == $order->business_id)
+                                                    <i class="fa fa-check-circle" style="color: green;"></i>
+                                                    <span style="padding-right: 10px;">{{date('j F', strtotime
+                                                    ($order->date))
+                                                    }}</span>
+                                                @endif
+                                            @endforeach
+                                        </td>
                                     </tr>
                                     @endforeach
                                     </tbody>

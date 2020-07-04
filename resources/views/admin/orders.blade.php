@@ -32,14 +32,20 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td>09:00</td>
-                                        <td>2020-06-17</td>
-                                        <td>Edinburgh</td>
-                                        <td>address</td>
-                                        <td> Single sheet * 1,  You were expecting a pillow * 1,</td>
-                                        <td> Singel set*1</td>
-                                    </tr>
+                                    @for($i=0; $i<count($final_orders);$i++)
+                                        <tr>
+                                            <td>{{$final_orders[$i][0]['time']}}</td>
+                                            <td>{{$final_orders[$i][0]['date']}}</td>
+                                            <td>{{$final_orders[$i][0]['client']}}</td>
+                                            <td>{{$final_orders[$i][0]['address']}}</td>
+                                            <td>
+                                            @for($j=0;$j<count($final_orders[$i][0]['product'][0]);$j++)
+                                                {{$final_orders[$i][0]['product'][0][$j][0]['product_name']}},
+                                            @endfor
+                                            </td>
+                                            <td>{{$final_orders[$i][0]['package']}}</td>
+                                        </tr>
+                                    @endfor
                                     </tbody>
                                 </table>
                             </div>
