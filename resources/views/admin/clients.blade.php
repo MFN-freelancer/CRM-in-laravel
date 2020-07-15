@@ -1,5 +1,14 @@
 @extends("layouts.backend")
 @section("content")
+    <style>
+        .dataTables_filter{
+            display: flex;
+            justify-content: center;
+            float: none !important;
+            margin-top: 0px !important;
+            height: 100px !important;
+        }
+    </style>
     <div class="content-body">
         <div class="container-fluid">
             <div class="row page-titles">
@@ -22,10 +31,9 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table header-border" style="min-width: 500px;">
+                                <table id="example2" class="display" style="width:100%">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Status</th>
@@ -33,16 +41,13 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @php($no=0)
                                     @foreach($clients as $client)
-                                        @php($no++)
-                                    <tr>
-                                        <td>{{$no}}</td>
-                                        <td>{{$client->name}}</td>
-                                        <td>{{$client->email}}</td>
-                                        <td>{{$client->status}}</td>
-                                        <td> <a href="{{route('updateClient', $client->id)}}" class="btn btn-ft btn-rounded btn-outline-info">Detail</a></td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{$client->name}}</td>
+                                            <td>{{$client->email}}</td>
+                                            <td>{{$client->status}}</td>
+                                            <td> <a href="{{route('updateClient', $client->id)}}" class="btn btn-ft btn-rounded btn-outline-info">Detail</a></td>
+                                        </tr>
                                     @endforeach
                                     </tbody>
                                 </table>
@@ -53,4 +58,23 @@
             </div>
         </div>
     </div>
+
+    {{--<script src="{{asset('assets/plugins/datatables/js/jquery.dataTables.min.js')}}"></script>--}}
+    {{--<script src="{{asset('assets/js/plugins-init/datatables.init.js')}}"></script>--}}
+    <script>
+        jQuery(document).ready(function () {
+            $('#example2').dataTable({
+                "bProcessing": true,
+                "sAutoWidth": false,
+                "bDestroy":true,
+                "sPaginationType": "bootstrap", // full_numbers
+                "iDisplayStart ": 10,
+                "iDisplayLength": 10,
+                "bPaginate": false, //hide pagination
+                "bFilter": true, //hide Search bar
+                "bInfo": false, // hide showing entries
+            })
+        });
+
+    </script>
 @endsection

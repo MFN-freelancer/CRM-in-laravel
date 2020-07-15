@@ -5,13 +5,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Dashboard</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{asset('assets/images/logo.svg')}}">
     <link href="{{asset('assets/plugins/datatables/css/jquery.dataTables.min.css')}}" rel="stylesheet">
     <!-- Custom Stylesheet -->
     <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
-
+    <link rel="stylesheet" href="{{asset('assets/plugins/select2/css/select2.min.css')}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css" />
     <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>
@@ -209,9 +210,10 @@
 {{--<script src="{{asset('assets/js/settings.js')}}/"></script>--}}
 {{--<script src="{{asset('assets/js/gleek.js')}}"></script>--}}
 <script src="{{asset('assets/js/styleSwitcher.js')}}"></script>
-
-{{--<script src="{{asset('assets/plugins/datatables/js/jquery.dataTables.min.js')}}"></script>--}}
-{{--<script src="{{asset('assets/js/plugins-init/datatables.init.js')}}"></script>--}}
+<script src="{{asset('assets/plugins/select2/js/select2.full.min.js')}}"></script>
+<script src="{{asset('assets/js/plugins-init/select2-init.js')}}"></script>
+<script src="{{asset('assets/plugins/datatables/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('assets/js/plugins-init/datatables.init.js')}}"></script>
 </body>
 
 </html>

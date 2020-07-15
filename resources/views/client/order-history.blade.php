@@ -16,6 +16,7 @@
             </div>
             <div class="row">
                 <div class="col-12">
+                    <div class="warning-msg"></div>
                     <div class="card">
                         <div class="card-body">
                             <div class="table-responsive">
@@ -52,9 +53,19 @@
                                                 <a href="javascript:void()" class="mr-4" data-toggle="tooltip"
                                                    data-placement="top" title="" data-original-title="Edit"><i
                                                             class="fa fa-pencil color-muted"></i> </a>
-                                                <a href="javascript:void()" data-toggle="tooltip"
-                                                   data-placement="top" title="" data-original-title="Close"><i
+
+                                                @if($current_date==date('yy-m-d', strtotime($order->created_at)))
+                                                <a href="{{route('order-delete',
+                                                $order->id)}}"
+                                                   data-toggle="tooltip"
+                                                   data-placement="top" title="" data-original-title="delete"><i
                                                             class="fa fa-close color-danger"></i></a>
+                                                @else
+                                                    <a href="javascript:void(0)"
+                                                       data-toggle="tooltip"
+                                                       data-placement="top" title="" data-original-title="delete"><i
+                                                                class="fa fa-close color-danger order-delete"></i></a>
+                                                @endif
                                             </span>
                                         </td>
                                     </tr>
@@ -69,4 +80,18 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('.order-delete').click( function () {
+                var myvar = '<div class="alert alert-danger">Can not delete because of time out.!</div>';
+                $('.warning-msg').html(myvar);
+                alertTimeout(3000);
+            });
+        });
+        function alertTimeout(wait){
+            setTimeout(function(){
+                $('.warning-msg .alert').remove();
+            }, wait);
+        }
+    </script>
 @endsection

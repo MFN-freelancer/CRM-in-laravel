@@ -33,16 +33,22 @@
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    @php($no=0)
+                                    @for($i=0;$i<count($final_orders);$i++)
                                     <tr>
-                                        <td>09:00</td>
-                                        <td>edson</td>
-                                        <td>peoid</td>
-                                        <td>eggs</td>
-                                        <td>12</td>
-                                        <td> #2122</td>
-                                        <td> East</td>
-                                        <td> view</td>
+                                        <td>{{$final_orders[$i][0]['time']}}</td>
+                                        <td>{{$final_orders[$i][0]['customer']}}</td>
+                                        <td>{{$final_orders[$i][0]['address']}}</td>
+                                        <td>{{$final_orders[$i][0]['kind']}}</td>
+                                        <td>{{$final_orders[$i][0]['floor']}}</td>
+                                        <td> {{$final_orders[$i][0]['code']}}</td>
+                                        <td> {{$final_orders[$i][0]['area']}}</td>
+                                        <td><a href="{{route('order-detail', $final_orders[$i][0]['order_id'])}}" class="btn
+                                        btn-info
+                                        btn-ft">View</a>
+                                        </td>
                                     </tr>
+                                    @endfor
                                     </tbody>
                                 </table>
                             </div>

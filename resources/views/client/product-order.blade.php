@@ -57,7 +57,7 @@
                                                     <div class="d-flex justify-content-around">
                                                         <div style="padding: 15px;">
                                                             <label >
-                                                                ${{$package->price}}
+                                                                {{--${{$package->price}}--}}
                                                             </label>
                                                         </div>
                                                         <div class="col-sm-4">
@@ -201,7 +201,7 @@
                 alertTimeout(3000);
             }
             if (flag==1 || product_flag == 1){
-                {{--document.location.href = '{{route('client-dashboard')}}'--}}
+                document.location.href = '{{route('client-dashboard')}}';
             }
 
         })

@@ -25,10 +25,10 @@
                                 <div class="media">
                                     <div class="media-body">
                                         <div class="d-flex align-items-center">
-                                         <div><h2 class="mt-0 mb-1 text-info">234</h2>
+                                         <div><h2 class="mt-0 mb-1 text-info">{{$ordered}}</h2>
                                              <span class="">Ordered</span>
                                          </div>
-                                         <div class="ml-4"><h2 class="mt-0 mb-1 text-info">2345</h2>
+                                         <div class="ml-4"><h2 class="mt-0 mb-1 text-info">{{$delivered}}</h2>
                                              <span class="">Delivered</span>
                                          </div>
                                         </div>
@@ -47,7 +47,7 @@
                             <div class="stat-widget-two">
                                 <div class="media">
                                     <div class="media-body">
-                                        <h2 class="mt-0 mb-1 text-danger">2,02,150</h2><span class="">Orders</span>
+                                        <h2 class="mt-0 mb-1 text-danger">0</h2><span class="">0</span>
                                     </div>
                                     <img class="ml-3" src="../../assets/images/icons/2.png" alt="">
                                 </div>
@@ -63,7 +63,7 @@
                             <div class="stat-widget-two">
                                 <div class="media">
                                     <div class="media-body">
-                                        <h2 class="mt-0 mb-1 text-warning">2,0</h2><span class="">Orders</span>
+                                        <h2 class="mt-0 mb-1 text-warning">0</h2><span class="">Orders</span>
                                     </div>
                                     <img class="ml-3" src="../../assets/images/icons/3.png" alt="">
                                 </div>
@@ -87,12 +87,20 @@
         new Chart(document.getElementById("bar-chart"), {
             type: 'bar',
             data: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                labels: [
+                    @foreach($products as $product)
+                    "{{$product->product_name}}",
+                    @endforeach
+                    ],
                 datasets: [
                     {
                         label: "",
                         backgroundColor: "#08306b",
-                        data: [100,30,90,80,83,87, 65,99,91,85,67,49]
+                        data: [
+                            @foreach($products as $product)
+                            {{$product->product_qty}},
+                            @endforeach
+                        ]
                     }
                 ]
             },

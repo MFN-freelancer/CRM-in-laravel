@@ -24,7 +24,9 @@ Route::group(['prefix'=>'admin'], function (){
 //        return view('login');
 //    });
     Route::get('orders', 'HomeController@orders')->name('orders');
+    Route::post('orders/filter', 'HomeController@filterOrder')->name('order-filter');
     Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
+    Route::post('export-pdf', 'HomeController@pdfDownload')->name('pdf-export');
 //    product crud
     Route::get('product', 'HomeController@product')->name('product');
     Route::get('product/add', 'ProductsController@index')->name('add-product');
@@ -59,7 +61,12 @@ Route::group(['prefix'=>'admin'], function (){
     Route::post('users/delivery-man/{id}', 'HomeController@updateDelivery');
     Route::get('users/delivery-man/delete/{id}', 'HomeController@deleteDelivery')->name('delete-delivery');
 //delivery end
+//places
     Route::get('places', 'HomeController@places')->name('places');
+    Route::get('places/{id}', 'HomeController@placeDetail')->name('place-detail');
+    Route::post('add-area/{id}', 'HomeController@addArea')->name('add-area');
+
+//end places
 //areas
     Route::get('areas', 'HomeController@areas')->name('areas');
     Route::post('areas/add', 'AreaController@store')->name('add-areas');
@@ -92,22 +99,23 @@ Route::group(['prefix'=>'client'], function (){
 //    order history start
     Route::get('order-history', 'HomeController@orderHistory')->name('order-history');
     Route::get('order-detail/{id}', 'OrderDetailController@index')->name('order-detail');
+    Route::get('order-delete/{id}', 'OrdersController@destroy')->name('order-delete');
 //    order history end
     Route::get('profile', 'HomeController@cProfile')->name('client-profile');
     Route::post('profile/{id}', 'HomeController@updateProfile')->name('update-profile');
 });
+
+
 //user part
 Route::group(['prefix'=>'user'], function (){
-//    Route::get('/', function (){
-//       return view('login');
-//    });
+
     Route::get('order-list', 'HomeController@orderList')->name('order-list');
+    Route::get('order-detail/{id}', 'HomeController@userOrderDetail')->name('order-detail');
     Route::get('profile', 'HomeController@cProfile')->name('user-profile');
 
 });
 
 Route::get('/config-cache', function() {
-
     $exitCode = Artisan::call('cache:clear');
     $exitCode = Artisan::call('route:clear');
     $exitCode = Artisan::call('view:clear');

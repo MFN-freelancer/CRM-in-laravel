@@ -13,6 +13,7 @@ use App\Products;
 use App\Packages;
 use App\PackageDetail;
 use App\Business;
+use PDF;
 class HomeController extends Controller
 {
     /**
@@ -84,10 +85,118 @@ class HomeController extends Controller
             $products = [];
         }
 //        dd($final_orders);
-        return view('admin.orders', compact('final_orders'));
+        $clients = User::where('role','client')->get();
+        return view('admin.orders', compact('final_orders', 'clients'));
+    }
+    public function filterOrder(Request $request){
+        $filter_date = date('Y-m-d', strtotime($request->input('filter_date')));
+        $client_id = $request->input('client_id');
+        $final_orders = [];
+        $products = [];
+        $temp_products = [];
+        $package_name ='';
+        $orders = '';
+        if ($client_id == 'all'){
+            $orders = Orders::where('date', $filter_date)->get();
+        }else{
+            $orders = Orders::where('date', $filter_date)
+                ->where('client_id', $client_id)->get();
+        }
+        foreach ($orders as $order){
+            $client_name = User::whereId($order->client_id)->select('name')->get();
+            $address = Business::whereId($order->business_id)->get();
+            $items = OrderDetail::where('order_id', $order->id)->select('product_id', 'package_id')->get();
+//            dd($items);
+            foreach ($items as $item){
+                $p_name = Products::whereId($item->product_id)->get();
+//                dd($p_name);
+                $temp = array([
+                    'product_name'=>$p_name[0]->product_name,
+                    'product_qty'=>$item->qty
+                ]);
+                array_push($temp_products,$temp);
+                $package_name = Packages::whereId($item->package_id)->get();
+            }
+            array_push($products, $temp_products);
+            $temp_products = [];
+
+//            dd($package_name[0]->name);
+            $total_orders = array([
+                'time'=>$order->time_range,
+                'date'=>$order->date,
+                'client'=>$client_name[0]->name,
+                'address'=>$address[0]->address,
+                'product'=>$products,
+                'package'=>count($package_name) ? $package_name[0]->name : ""
+            ]);
+
+            array_push($final_orders, $total_orders);
+            $products = [];
+        }
+        return response()->json($final_orders);
+    }
+//    pdf download
+    public function pdfDownload(Request $request){
+
+        $filter_date = date('Y-m-d', strtotime($request->input('order_date')));
+        $client_id = $request->input('client_id');
+
+        $final_orders = [];
+        $products = [];
+        $temp_products = [];
+        $package_name ='';
+        $orders = '';
+        if ($client_id == 'all'){
+            $orders = Orders::where('date', $filter_date)->get();
+        }else{
+            $orders = Orders::where('date', $filter_date)
+                              ->where('client_id', $client_id)->get();
+        }
+        foreach ($orders as $order){
+            $client_name = User::whereId($order->client_id)->select('name')->get();
+            $address = Business::whereId($order->business_id)->get();
+            $items = OrderDetail::where('order_id', $order->id)->select('product_id', 'package_id')->get();
+//            dd($items);
+            foreach ($items as $item){
+                $p_name = Products::whereId($item->product_id)->get();
+//                dd($p_name);
+                $temp = array([
+                    'product_name'=>$p_name[0]->product_name,
+                    'product_qty'=>$item->qty
+                ]);
+                array_push($temp_products,$temp);
+                $package_name = Packages::whereId($item->package_id)->get();
+            }
+            array_push($products, $temp_products);
+            $temp_products = [];
+
+//            dd($package_name[0]->name);
+            $total_orders = array([
+                'time'=>$order->time_range,
+                'date'=>$order->date,
+                'client'=>$client_name[0]->name,
+                'address'=>$address[0]->address,
+                'product'=>$products,
+                'package'=>count($package_name) ? $package_name[0]->name : ""
+            ]);
+
+            array_push($final_orders, $total_orders);
+            $products = [];
+        }
+        dd($final_orders);
+//        return view('pdf', compact('final_orders'));
+        $pdf = PDF::loadView('pdf', compact('final_orders'));
+
+        return $pdf->download('orders.pdf');
     }
     public function dashboard(){
-        return view('admin.dashboard');
+        $ordered = Orders::where('status', 1)->get();
+        $ordered = count($ordered);
+        $delivered = Orders::where('status', 2)->get();
+        $delivered = count($delivered);
+//        products
+        $products = Products::all();
+        return view('admin.dashboard', compact('ordered', 'delivered', 'products'));
     }
     public function product(){
         $products = Products::all();
@@ -224,9 +333,23 @@ class HomeController extends Controller
         return redirect()->route('delivery');
     }
 //    end delivery man
+
+//places start
     public function places(){
-        return view('admin.places');
+        $users = User::all();
+        return view('admin.places', compact('users'));
     }
+    public function placeDetail($id){
+        $place_details = Business::where('client_id', $id)->get();
+        $areas = Area::all();
+        return view('admin.place-detail', compact('place_details', 'areas'));
+    }
+    public function addArea(Request $request, $id){
+
+        Business::whereId($id)->update(['area_id'=>$request->input('area')]);
+        return back();
+    }
+//end places
     public function areas(){
         $areas = Area::all();
         return view('admin.areas', compact('areas'));
@@ -317,14 +440,12 @@ class HomeController extends Controller
         $order_address = [];
 //        $addresses = Business::all();
         $orders = Orders::where('client_id', Auth::user()->id)->orderBy('date', 'DESC')->get();
-//        dd($orders);
-//        $address = Orders::find(11)->order_address;
-//        dd($address->address);
+        $current_date = date('yy-m-d');
+//        dd($current_date);
         foreach ($orders as $order){
             $order_address[] = orders::find($order->id)->order_address;
         }
-//        dd($order_address);
-        return view('client.order-history', compact('orders','order_address'));
+        return view('client.order-history', compact('orders','order_address', 'current_date'));
     }
     public function cProfile(){
         return view('client.profile');
@@ -344,8 +465,52 @@ class HomeController extends Controller
                  ,'phone'=>$phone]);
         return back();
     }
+
+
 //    delivery user
     public function orderList(){
-        return view('user.order-list');
+        $final_orders = [];
+        $orders = Orders::all();
+        foreach ($orders as $order){
+            $client_name = User::whereId($order->client_id)->select('name')->get();
+            $business = Business::whereId($order->business_id)->get();
+            //dd($business);
+            if($business[0]->kind === 0){
+                $kind = 'Apartment';
+            }else $kind = 'Hotel';
+
+            $total_orders = array([
+                'time'=>$order->time_range,
+                'customer'=>$client_name[0]->name,
+                'address'=>$business[0]->address,
+                'kind'=>$kind,
+                'floor'=>$business[0]->floor,
+                'code'=>$business[0]->code,
+                'area'=>$business[0]->area,
+                'order_id'=>$order->id
+            ]);
+
+            array_push($final_orders, $total_orders);
+        }
+        //dd($final_orders);
+        return view('user.order-list', compact('final_orders'));
+    }
+    public function userOrderDetail($id){
+        $total_products = [];
+        $product_ids = OrderDetail::where('order_id', $id)->get();
+
+        foreach ($product_ids as $product_id){
+            $product = Products::where('id', $product_id->product_id)->get();
+            $temp = array([
+                'name'=>$product[0]->product_name,
+                'qty'=>$product[0]->product_qty,
+                'desc'=>$product[0]->product_detail
+            ]);
+            array_push($total_products, $temp);
+        }
+        $business_id = Orders::whereId($id)->get();
+        $business = Business::where('id', $business_id[0]->business_id)->get();
+
+        return view('user.order-detail', compact('total_products', 'business'));
     }
 }

@@ -8,6 +8,7 @@ use App\PackageDetail;
 use App\Products;
 use App\Packages;
 use Auth;
+
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
@@ -136,8 +137,10 @@ class OrdersController extends Controller
      * @param  \App\Orders  $orders
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Orders $orders)
+    public function destroy($id)
     {
-        //
+        Orders::whereId($id)->delete();
+        return back();
     }
+
 }

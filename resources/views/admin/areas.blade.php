@@ -29,18 +29,14 @@
                                 <table class="table header-border" style="min-width: 500px;">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>Area</th>
                                         <th>Edit</th>
                                         <th>Delete</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @php($no=0)
                                     @foreach($areas as $area)
-                                        @php($no++)
                                     <tr>
-                                        <td>{{$no}}</td>
                                         <td>{{$area->area_name}}</td>
                                         <td><a href="javascript:void(0)" onclick="updateArea({{$area->id}})"
                                                class="btn btn-ft btn-rounded btn-outline-info">

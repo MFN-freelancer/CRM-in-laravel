@@ -1,5 +1,14 @@
 @extends("layouts.backend")
 @section("content")
+    <style>
+        .dataTables_filter{
+            display: flex;
+            justify-content: center;
+            float: none !important;
+            margin-top: 0px !important;
+            height: 100px !important;
+        }
+    </style>
     <div class="content-body">
         <div class="container-fluid">
             <div class="row page-titles">
@@ -18,11 +27,11 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header pb-0">
-                            <h4 class="card-title">View places</h4>
+                            <h4 class="card-title">Delivery Man</h4>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table header-border" style="min-width: 500px;">
+                                <table id="example2" class="display" style="width:100%">
                                     <thead>
                                     <tr>
                                         <th>ID</th>
@@ -53,4 +62,20 @@
             </div>
         </div>
     </div>
+    <script>
+        jQuery(document).ready(function () {
+            $('#example2').dataTable({
+                "bProcessing": true,
+                "sAutoWidth": false,
+                "bDestroy":true,
+                "sPaginationType": "bootstrap", // full_numbers
+                "iDisplayStart ": 10,
+                "iDisplayLength": 10,
+                "bPaginate": false, //hide pagination
+                "bFilter": true, //hide Search bar
+                "bInfo": false, // hide showing entries
+            })
+        });
+
+    </script>
 @endsection
